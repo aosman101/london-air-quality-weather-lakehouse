@@ -1,8 +1,13 @@
 from __future__ import annotations
-import os
+
 import json
+import os
+from functools import lru_cache
+
 import boto3
 
+
+@lru_cache(maxsize=1)
 def s3_client():
     return boto3.client(
         "s3",
@@ -12,10 +17,11 @@ def s3_client():
         region_name="us-east-1",
     )
 
+
 def put_json(bucket: str, key: str, payload: dict) -> None:
     """
     Writes a JSON object to the lake as an object like:
       raw/openaq/YYYY/MM/DD/...json
     """
-    s3 = s3_client()
-    s3.put_object(Bucket=bucket, Key=key, Body=json.dumps(payload).encode("utf-8"))
+    body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    s3_client().put_object(Bucket=bucket, Key=key, Body=body, ContentType="application/json")
