@@ -1,0 +1,1 @@
+-- TODO: bootstrap warehouse schemas/tables for the lakehouse project

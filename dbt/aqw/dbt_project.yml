@@ -1,0 +1,8 @@
+name: aqw
+version: "1.0.0"
+config-version: 2
+profile: aqw
+model-paths: ["models"]
+models:
+  aqw:
+    +materialized: view

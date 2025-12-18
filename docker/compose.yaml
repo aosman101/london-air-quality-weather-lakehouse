@@ -1,0 +1,21 @@
+version: "3.9"
+
+# TODO: define Airflow, Postgres, MinIO, and Metabase services
+services:
+  # airflow-webserver:
+  #   build: ./airflow
+  #   environment:
+  #     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+  #   # ...
+  
+  # postgres:
+  #   image: postgres:15
+  #   # ...
+
+  # minio:
+  #   image: minio/minio
+  #   # ...
+
+  # metabase:
+  #   image: metabase/metabase
+  #   # ...
