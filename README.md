@@ -38,7 +38,6 @@ Local lakehouse demo that pulls hourly OpenAQ readings around London, lands raw 
                            +----+----+
                            | Metabase|
                            +---------+
-
 ```
 
 - `dags/aqw_london_lakehouse.py` discovers nearby sensors, pulls the last hour of readings, writes raw objects to S3-compatible storage, and idempotently upserts into `raw.air_quality_hourly`.
