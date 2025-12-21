@@ -17,31 +17,28 @@ Local lakehouse demo that pulls hourly OpenAQ readings around London, lands raw 
 ## System architecture
 
 ```
-                   +--------------------+
-                   |     OpenAQ API     |
-                   +---------+----------+
-                             |
-                discover sensors + hourly pull
-                             |
-                 +-----------v-----------+
-                 | Airflow DAG (TaskFlow)|
-                 |   schedule: @hourly   |
-                 +-----------+-----------+
-                             |
-         +-------------------+-------------------+
-         |                                       |
- +-------v-------+                       +-------v------------------+
- |   MinIO lake  |                       |    Postgres warehouse    |
- | raw/openaq/...|                       | raw.air_quality_hourly   |
- +-------+-------+                       | marts.fct_air_quality... |
-         |                               +-----------+--------------+
-         |                                           |
-         v                                           v
-   Object storage                             dbt models (incremental)
-                                                    |
-                                           Great Expectations checks
-                                                    |
-                                                 Metabase
+      +------------------+          +-------------------+
+      |   OpenAQ API      |          |   Open-Meteo API   |
+      +---------+---------+          +---------+---------+
+                |                              |
+                v                              v
+         +------+-------------------------------+------+
+         |                Apache Airflow               |
+         |  DAG: extract -> land -> load -> transform  |
+         +------+-------------------------------+------+
+                |                              |
+                v                              v
+      +------------------+          +-------------------+
+      |  MinIO (S3 lake) |          | Postgres (warehouse)|
+      | raw JSON objects |          | raw/stg/marts tables|
+      +---------+--------+          +---------+----------+
+                |                              |
+                +---------------+--------------+
+                                v
+                           +----+----+
+                           | Metabase|
+                           +---------+
+
 ```
 
 - `dags/aqw_london_lakehouse.py` discovers nearby sensors, pulls the last hour of readings, writes raw objects to S3-compatible storage, and idempotently upserts into `raw.air_quality_hourly`.
