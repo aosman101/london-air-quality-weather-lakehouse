@@ -47,6 +47,7 @@ This local lakehouse demo retrieves hourly OpenAQ readings from around London an
 ---
 
 ## Stack (local, via Docker Compose)
+
 - Airflow webserver + scheduler (LocalExecutor) at `localhost:8080`
 - Postgres (warehouse) at `localhost:5434`
 - MinIO API/console at `localhost:9000/9001`
@@ -62,11 +63,13 @@ Docker + Docker Compose, plus a free `OPENAQ_API_KEY` from OpenAQ.
 
 2) Create `.env`  
 Place this next to `docker/compose.yaml`:
+
 ```
 OPENAQ_API_KEY=your_token
 MINIO_ROOT_USER=minioadmin
 MINIO_ROOT_PASSWORD=change_me
 WAREHOUSE_PASSWORD=change_me
+
 # Optional overrides
 WAREHOUSE_HOST=warehouse-db
 WAREHOUSE_PORT=5432
@@ -74,12 +77,14 @@ WAREHOUSE_DB=warehouse
 WAREHOUSE_USER=warehouse
 ```
 
-3) Bring up the stack  
+3) Bring up the stack
+
 ```bash
 docker compose -f docker/compose.yaml up -d --build
 ```
 
 4) Create an Airflow admin user (first run only)  
+
 ```bash
 docker compose -f docker/compose.yaml run --rm airflow-webserver \
   airflow users create --username admin --password admin \
@@ -87,11 +92,13 @@ docker compose -f docker/compose.yaml run --rm airflow-webserver \
 ```
 
 5) Use Airflow  
+
 - Open http://localhost:8080, enable DAG `aqw_london_lakehouse`, trigger a run.
 - Raw objects land under `raw/openaq/hourly/...` in MinIO (console: http://localhost:9001).
 - Flattened rows upsert into `raw.air_quality_hourly` in Postgres (`localhost:5434` from your host).
 
-6) Run dbt transforms  
+6) Run dbt transforms
+
 ```bash
 cd dbt/aqw
 dbt deps
@@ -99,13 +106,15 @@ dbt run
 ```
 `profiles.yml` points to the warehouse on `localhost:5434` with schema `marts`.
 
-7) Data quality check (optional)  
+7) Data quality check (optional)
+
 ```bash
 export WAREHOUSE_USER=warehouse WAREHOUSE_PASSWORD=... WAREHOUSE_HOST=localhost WAREHOUSE_PORT=5434 WAREHOUSE_DB=warehouse
 python quality/gx_validate.py
 ```
 
-8) Explore in Metabase  
+8) Explore in Metabase
+
 Connect to Postgres at `localhost:5434`, database `warehouse`, user `warehouse`.
 
 To tear down: `docker compose -f docker/compose.yaml down -v`
@@ -113,6 +122,7 @@ To tear down: `docker compose -f docker/compose.yaml down -v`
 ---
 
 ## Data + models
+
 - Raw landing: `raw.air_quality_hourly` (hourly sensor readings; primary key `(sensor_id, ts_utc)`).
 - Transform: `dbt/aqw/models/staging/stg_air_quality_hourly.sql` → `dbt/aqw/models/marts/fct_air_quality_hourly.sql` (incremental).
 - Quality: `quality/gx_validate.py` checks sensor + timestamp presence and bounds `value`.
@@ -120,6 +130,7 @@ To tear down: `docker compose -f docker/compose.yaml down -v`
 ---
 
 ## Configuration knobs
+
 - `OPENAQ_API_KEY` (required) — OpenAQ auth token.
 - `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` — MinIO credentials; `LAKE_BUCKET` defaults to `lake`.
 - `WAREHOUSE_*` — connection info for the warehouse database (used by Airflow, dbt, GX).
@@ -128,6 +139,7 @@ To tear down: `docker compose -f docker/compose.yaml down -v`
 ---
 
 ## Extending / next steps
+
 - Add Open-Meteo pulls into the DAG and populate `raw.weather_hourly` (schema already provisioned).
 - Layer more dbt models (dimensions, rollups) and dbt tests.
 - Harden Airflow for production (remote executor, secrets backend, auth).
@@ -136,6 +148,7 @@ To tear down: `docker compose -f docker/compose.yaml down -v`
 ---
 
 ## Project layout
+
 ```
 .
 ├── dags/                 Airflow DAGs (TaskFlow)
@@ -150,6 +163,7 @@ To tear down: `docker compose -f docker/compose.yaml down -v`
 ---
 
 ## References
+
 - Airflow TaskFlow tutorial: https://airflow.apache.org/docs/apache-airflow/stable/tutorial/taskflow.html
 - OpenAQ API: https://docs.openaq.org/
 - Open-Meteo API: https://open-meteo.com/en/docs
