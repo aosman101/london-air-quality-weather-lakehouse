@@ -1,0 +1,23 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environments
+.env
+.venv/
+venv/
+
+# OS/filesystem noise
+.DS_Store
+
+# dbt artifacts
+dbt/aqw/target/
+dbt/aqw/dbt_modules/
+
+# Airflow logs
+airflow_logs/
+logs/
+
+# Great Expectations
+great_expectations/
