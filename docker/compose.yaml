@@ -57,7 +57,7 @@ services:
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
-      LAKE_BUCKET: miniadmin
+      LAKE_BUCKET: minoadmin
       WAREHOUSE_HOST: warehouse-db
       WAREHOUSE_PORT: "5432"
       WAREHOUSE_DB: warehouse
@@ -86,7 +86,7 @@ services:
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
-      LAKE_BUCKET: miniadmin
+      LAKE_BUCKET: minoadmin
       WAREHOUSE_HOST: warehouse-db
       WAREHOUSE_PORT: "5432"
       WAREHOUSE_DB: warehouse
