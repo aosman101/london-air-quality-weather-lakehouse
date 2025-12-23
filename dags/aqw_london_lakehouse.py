@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
-from airflow.utils.context import get_current_context
+from airflow.operators.python import get_current_context
 
 from aqw.openaq_client import list_locations_near, sensor_hourly
 from aqw.lake import put_json, s3_client
