@@ -4,6 +4,7 @@ import os
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
 from airflow.operators.python import get_current_context
+from botocore.exceptions import ClientError
 
 from aqw.openaq_client import list_locations_near, sensor_hourly
 from aqw.lake import put_json, s3_client
@@ -44,12 +45,20 @@ def aqw_london_lakehouse():
         end = ctx["data_interval_end"].in_timezone("UTC")
 
         bucket = os.getenv("LAKE_BUCKET", "lake")
-        # Ensure bucket exists (idempotent)
+        # Ensure bucket exists (idempotent, tolerate concurrent creators)
         s3 = s3_client()
         try:
             s3.head_bucket(Bucket=bucket)
-        except Exception:
-            s3.create_bucket(Bucket=bucket)
+        except ClientError as err:
+            code = err.response.get("Error", {}).get("Code")
+            if code not in ("404", "NoSuchBucket"):
+                raise
+            try:
+                s3.create_bucket(Bucket=bucket)
+            except ClientError as create_err:
+                create_code = create_err.response.get("Error", {}).get("Code")
+                if create_code not in ("BucketAlreadyOwnedByYou", "BucketAlreadyExists"):
+                    raise
 
         all_rows = []
         for s in sensors:
