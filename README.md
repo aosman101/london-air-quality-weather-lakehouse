@@ -8,9 +8,9 @@
 ![Metabase](https://img.shields.io/badge/Metabase-BI-509EE3?logo=metabase&logoColor=white)
 ![Great Expectations](https://img.shields.io/badge/Great%20Expectations-Data%20Quality-5C4EE5)
 
-This local lakehouse demo retrieves hourly OpenAQ readings from around London and stores the raw JSON data in a MinIO lake. It then upserts flattened rows into a PostgreSQL database, transforms the data with dbt, runs checks with Great Expectations, and visualises the results in Metabase. The entire setup is containerised for quick, easy deployment.
+This local lakehouse demonstration retrieves hourly OpenAQ readings from various locations around London and stores the raw JSON data in a MinIO lake. It then performs upserts of flattened rows into a PostgreSQL database, transforms the data using dbt, conducts checks with Great Expectations, and visualises the results in Metabase. The entire setup is containerised for quick and easy deployment.
 
-> Portfolio/learning project; the Airflow Compose stack is intentionally minimal and not production-hardened.
+> This portfolio project involves a minimal version of the Airflow Compose stack, which is not designed for production use.
 
 ---
 
